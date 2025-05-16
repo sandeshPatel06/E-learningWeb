@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ - SHP-Learner{% endblock %}
+{% block og_title %}FAQ - SHP-Learner{% endblock %}
+
+{% block content %}
+<style>
+  .search-bar {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .search-bar input {
+    width: 80%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .faq {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .faq input {
+    display: none;
+  }
+
+  .faq-label {
+    display: block;
+    font-weight: bold;
+    padding: 15px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    background-color: #0b4c85;
+  }
+
+  .faq-label:hover {
+    background-color: #142951;
+  }
+
+  .faq-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 15px;
+    background-color: #0c4e8c;
+  }
+
+  .faq input:checked ~ .faq-content {
+    max-height: 500px;
+    padding: 15px;
+  }
+
+  .qa-section, .feedback-btn {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .qa-section form {
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .qa-section textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #1050aa;
+    border-radius: 5px;
+  }
+
+  .qa-section button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .qa-section button:hover {
+    background-color: #0056b3;
+  }
+
+  .feedback-btn a {
+    display: inline-block;
+    margin: 20px;
+    padding: 10px 25px;
+    background-color: #28a745;
+    color: rgb(20, 49, 145);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .feedback-btn a:hover {
+    background-color: #218838;
+  }
+</style>
+
+<div class="container">
+  <h1>Frequently Asked Questions</h1>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search questions..." onkeyup="filterFaqs()">
+  </div>
+
+  <!-- FAQ List -->
+  <div id="faqList">
+    {% for faq in faqs %}
+      <div class="faq">
+        <input type="checkbox" id="faq-db-{{ forloop.counter }}">
+        <label class="faq-label" for="faq-db-{{ forloop.counter }}">{{ faq.question }}</label>
+        <div class="faq-content">
+          <p>{{ faq.answer|safe }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p>No FAQs available from the database.</p>
+    {% endfor %}
+
+    <!-- Static FAQs -->
+    <div class="faq">
+      <input type="checkbox" id="faq1">
+      <label class="faq-label" for="faq1">What is this platform about?</label>
+      <div class="faq-content">
+        <p>Our platform provides high-quality online courses across various domains to help you learn and grow your skills.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <input type="checkbox" id="faq2">
+      <label class="faq-label" for="faq2">How do I buy a course?</label>
+      <div class="faq-content">
+        <p>Choose a course, add it to your cart, and complete the checkout process using UPI, debit/credit cards, or wallets.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <input type="checkbox" id="faq3">
+      <label class="faq-label" for="faq3">Do you offer certificates?</label>
+      <div class="faq-content">
+        <p>Yes, we provide certificates for most paid courses after successful completion.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <input type="checkbox" id="faq4">
+      <label class="faq-label" for="faq4">Can I access the course after purchase forever?</label>
+      <div class="faq-content">
+        <p>Yes, once you purchase a course, you get lifetime access unless specified otherwise.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <input type="checkbox" id="faq5">
+      <label class="faq-label" for="faq5">Is there a mobile app?</label>
+      <div class="faq-content">
+        <p>We are working on our mobile app. Meanwhile, you can access all features through your mobile browser.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <input type="checkbox" id="faq6">
+      <label class="faq-label" for="faq6">How can I get support?</label>
+      <div class="faq-content">
+        <p>You can email us at <a href="mailto:patelbr5118s@gmail.com">patelbr5118s@gmail.com</a> or use the contact form on our website.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ask Your Own Question -->
+<div class="qa-section">
+  <h2>Have a Question?</h2>
+  <form id="questionForm" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Question</button>
+  </form>
+
+  <!-- Thank You Popup -->
+  <div id="thankYouPopup" style="display:none; margin-top: 20px; color: green; font-weight: bold;">
+     Thank you for your question!
+  </div>
+</div>
+
+  <!-- Feedback Button -->
+  <div class="feedback-btn">
+    <a href="mailto:patelbr5118s@gmail.com?subject=Website Feedback">Give Feedback</a>
+  </div>
+</div>
+
+<script>
+  function filterFaqs() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const faqs = document.querySelectorAll('#faqList .faq');
+
+    faqs.forEach(faq => {
+      const label = faq.querySelector('.faq-label').textContent.toLowerCase();
+      faq.style.display = label.includes(input) ? '' : 'none';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('questionForm');
+    const popup = document.getElementById('thankYouPopup');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const question = form.querySelector('textarea').value;
+
+      fetch("{% url 'faq' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': csrfToken
+        },
+        body: new URLSearchParams({
+          question: question
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          form.reset(); // Clear the form
+          popup.style.display = 'block'; // Show thank you
+          setTimeout(() => {
+            popup.style.display = 'none';
+          }, 3000); // Hide after 3 seconds
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      });
+    });
+  });
+
+</script>
+{% endblock %}

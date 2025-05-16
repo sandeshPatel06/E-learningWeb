@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ course.title }} - E-Learn{% endblock %}
-{% block og_title %}{{ course.title }} - E-Learn{% endblock %}
+{% block title %}{{ course.title }} - SHP-Learner{% endblock %}
+{% block og_title %}{{ course.title }} - SHP-Learner{% endblock %}
 
 {% block content %}
 <h1>{{ course.title }}</h1>
@@ -12,7 +12,7 @@
 <p>
   <strong>Price:</strong>
   {% if course.is_free %}
-    Free
+    Free of Cost
   {% else %}
     ${{ course.price }}
   {% endif %}
@@ -30,19 +30,24 @@
   <p>Please <a href="{% url 'login' %}">log in</a> to enroll in this course.</p>
 {% endif %}
 
-<h2>Lessons</h2>
-<ul class="list-group">
-  {% for lesson in course.lessons.all %}
-    <li class="list-group-item">
-      <strong>{{ lesson.title }}</strong> (Lesson {{ lesson.order }})
-      {% if lesson.video_url %}
-        <a href="{{ lesson.video_url }}" target="_blank">Watch Video</a>
-      {% endif %}
-    </li>
-  {% empty %}
-    <li class="list-group-item">No lessons available yet.</li>
-  {% endfor %}
-</ul>
+{% if is_enrolled %}
+  <h2>Lessons</h2>
+  <ul class="list-group">
+    {% for lesson in course.lessons.all %}
+      <li class="list-group-item">
+        <strong>{{ lesson.title }}</strong> (Lesson {{ lesson.order }})
+        {% if lesson.video_url %}
+          <a href="{{ lesson.video_url }}" target="_blank">Watch Video</a>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="list-group-item">No lessons available yet.</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="alert alert-warning">You need to enroll in this course to access the lessons.</p>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_js %}

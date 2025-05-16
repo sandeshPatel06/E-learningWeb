@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home - E-Learn{% endblock %}
-{% block og_title %}Home - E-Learn{% endblock %}
+{% block title %}Home - SHP-Learner{% endblock %}
+{% block og_title %}Home - SHP-Learner{% endblock %}
 
 {% block content %}
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Welcome to E-Learn</h1>
+        <h1>Welcome to SHP-Learner</h1>
         <p>Explore our wide range of courses to enhance your skills.</p>
         <a href="{% url 'courses' %}" class="btn btn-primary">Browse Courses</a>
     </section>
@@ -20,7 +20,7 @@
                 <h3>{{ course.title }}</h3>
                 <p>{{ course.description|truncatewords:20 }}</p>
                 <p><strong>Instructor:</strong> {{ course.instructor.username }}</p>
-                <p><strong>Price:</strong> {% if course.is_free %}Free{% else %}${{ course.price }}{% endif %}</p>
+                <p><strong>Price:</strong> {% if course.is_free %}Free{% else %}₹{{ course.price }}{% endif %}</p>
                 <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">View Course</a>
             </div>
         {% empty %}

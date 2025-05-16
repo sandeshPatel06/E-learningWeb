@@ -4,6 +4,8 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
+from django.urls import reverse
+
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
@@ -14,6 +16,14 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profiles/', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # Automatically set is_staff if user is an instructor or admin
+        if self.role in ['instructor', 'admin']:
+            self.is_staff = True
+        else:
+            self.is_staff = False
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username
@@ -46,7 +56,8 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
-
+    def get_absolute_url(self):
+        return reverse('course_detail', kwargs={'slug': self.slug})
 class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
     title = models.CharField(max_length=200)
@@ -77,3 +88,10 @@ class Quiz(models.Model):
 
     def __str__(self):
         return f"{self.lesson.title} - {self.title}"
+class FAQ(models.Model):
+    question = models.TextField()
+    answer = models.TextField(blank=True)  # allow blank answers
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.question[:60]

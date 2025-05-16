@@ -4,26 +4,15 @@ Django settings for E-Learning Platform project with Jazzmin theme.
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
 from django.core.exceptions import ImproperlyConfigured
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Helper function to get environment variables
-def get_env_variable(var_name):
-    try:
-        return os.getenv(var_name)
-    except KeyError:
-        raise ImproperlyConfigured(f"Set the {var_name} environment variable")
-
-# Build paths
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
-SECRET_KEY = get_env_variable('DJANGO_SECRET_KEY')
-DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+SECRET_KEY = 'your_secret_key_here'  # Replace with your actual secret key
+DEBUG = True  # Set to False in production
+ALLOWED_HOSTS = ['192.168.171.173','localhost','127.1.0.0']  # Add your allowed hosts here
 
 # Application definition
 INSTALLED_APPS = [
@@ -94,11 +83,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -119,13 +103,21 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Email settings
+# # Email settings
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your_email@example.com'  # Replace with your email
+# EMAIL_HOST_PASSWORD = '***REMOVED***'  # Replace with your email password
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = get_env_variable('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = get_env_variable('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = 'sandeshpatel.sp.93@gmail.com'
+EMAIL_HOST_PASSWORD = 'fkorislsvoxviqcn'  # Use environment variables for security
+DEFAULT_FROM_EMAIL = 'patelbr5118s@gmail.com'
+
 
 # Security settings for production
 SECURE_SSL_REDIRECT = not DEBUG
@@ -136,14 +128,14 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Jazzmin settings
 JAZZMIN_SETTINGS = {
-    "site_title": "E-Learning Admin",
-    "site_header": "E-Learning Platform",
-    "site_brand": "E-Learn",
-    "site_logo": None,
-    "login_logo": None,
-    "site_icon": None,
-    "welcome_sign": "Welcome to E-Learning Admin",
-    "copyright": "E-Learning Platform 2025",
+    "site_title": "SHP-Learner",
+    "site_header": "SHP-Learner",
+    "site_brand": "SHP-Learner",
+    "site_logo": "/img/logo.png",
+    "login_logo":" /img/logo.png",
+    "site_icon": "/img/logo.png",
+    "welcome_sign": "Welcome to SHP-Learner Admin",
+    "copyright": "SHP-Learner Platform 2025",
     "search_model": ["courses.Course", "courses.CustomUser"],
     "user_avatar": None,
     "topmenu_links": [
@@ -210,8 +202,7 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "flatly",
-    "dark_mode_theme": "darkly",
+    "theme": "default",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",

@@ -1,3 +1,5 @@
+from django.shortcuts import render, redirect
+from .forms import QuestionForm
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -7,6 +9,31 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from .models import Course, Enrollment, CustomUser
+from django.shortcuts import render
+from .models import FAQ
+from django.views.generic import ListView
+from django import forms
+from django.shortcuts import render, redirect
+from .models import FAQ
+from .forms import QuestionForm
+
+def faq_view(request):
+    faqs = FAQ.objects.exclude(answer="").order_by('-created_at')  # show only answered questions
+    form = QuestionForm()
+
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            FAQ.objects.create(
+                question=form.cleaned_data['question'],
+                answer=''  # keep answer blank until admin adds it later
+            )
+            return redirect('faq')  # reload the page after submission
+
+    return render(request, 'faq.html', {'faqs': faqs, 'form': form})
+
+
+
 
 class RegisterForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -23,6 +50,18 @@ class RegisterForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+
+        # Automatically make instructors staff
+        if self.cleaned_data.get('role') == 'instructor':
+            user.is_staff = True
+
+        if commit:
+            user.save()
+        return user
+
 def index(request):
     """
     Renders the homepage with a list of all courses.
@@ -30,6 +69,7 @@ def index(request):
     courses = Course.objects.all()
     context = {'courses': courses}
     return render(request, 'index.html', context)
+
 
 def courses(request):
     """
@@ -94,7 +134,7 @@ def register(request):
             user.save()
             # Send welcome email
             subject = 'Welcome to E-Learn!'
-            html_message = render_to_string('emails/welcome_email.html', {
+            html_message = render_to_string('registration/welcome_email.html', {
                 'user': user,
                 'site_url': request.build_absolute_uri('/')
             })
@@ -128,7 +168,7 @@ def enroll(request, slug):
             enrollment = Enrollment.objects.create(student=request.user, course=course)
             # Send enrollment email
             subject = f'Enrolled in {course.title}'
-            html_message = render_to_string('emails/course_enrollment_email.html', {
+            html_message = render_to_string('registration/course_enrollment_email.html', {
                 'user': request.user,
                 'course': course,
                 'course_url': request.build_absolute_uri(course.get_absolute_url())
@@ -148,3 +188,22 @@ def enroll(request, slug):
             messages.success(request, f'You have successfully enrolled in {course.title}!')
             return redirect('course_detail', slug=course.slug)
     return render(request, 'enroll.html', {'course': course})
+
+from django.contrib.auth.views import PasswordResetView
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
+
+class CustomPasswordResetView(PasswordResetView):
+    def form_valid(self, form):
+        opts = {
+            'use_https': self.request.is_secure(),
+            'token_generator': self.token_generator,
+            'from_email': self.from_email or settings.DEFAULT_FROM_EMAIL,
+            'email_template_name': self.email_template_name,  # still used for plain text fallback
+            'request': self.request,
+            'html_email_template_name': self.html_email_template_name,  # new key for HTML template
+            'subject_template_name': self.subject_template_name,
+        }
+        form.save(**opts)
+        return super().form_valid(form)
