@@ -16,7 +16,7 @@ DEBUG = str_to_bool(os.getenv('DEBUG', 'True'))
 
 # ALLOWED_HOSTS as a list, parse comma-separated string
 allowed_hosts_str = os.getenv('ALLOWED_HOSTS', '')
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',')] if allowed_hosts_str else []
+ALLOWED_HOSTS = ["sh-2eas.onrender.com"]
 
 # Application definition
 INSTALLED_APPS = [
