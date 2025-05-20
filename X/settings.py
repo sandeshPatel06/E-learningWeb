@@ -1,18 +1,13 @@
-"""
-Django settings for E-Learning Platform project with Jazzmin theme.
-"""
-
 from pathlib import Path
+from decouple import config, Csv
 import os
-from django.core.exceptions import ImproperlyConfigured
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security settings
-SECRET_KEY = 'your_secret_key_here'  # Replace with your actual secret key
-DEBUG = True  # Set to False in production
-ALLOWED_HOSTS = ['192.168.171.173','localhost','127.1.0.0']  # Add your allowed hosts here
+# Load environment variables
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # Application definition
 INSTALLED_APPS = [
@@ -58,10 +53,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'X.wsgi.application'
 
 # Database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.' + config('DB_ENGINE'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='3306'),
     }
 }
 
@@ -86,13 +93,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom user model
 AUTH_USER_MODEL = 'courses.CustomUser'
 
-# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -103,28 +107,22 @@ REST_FRAMEWORK = {
     ],
 }
 
-# # Email settings
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your_email@example.com'  # Replace with your email
-# EMAIL_HOST_PASSWORD = '***REMOVED***'  # Replace with your email password
+# Email configuration from environment
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sandeshpatel.sp.93@gmail.com'
-EMAIL_HOST_PASSWORD = 'fkorislsvoxviqcn'  # Use environment variables for security
-DEFAULT_FROM_EMAIL = 'patelbr5118s@gmail.com'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
-
-# Security settings for production
+# Security settings
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
 
 # Jazzmin settings
 JAZZMIN_SETTINGS = {
@@ -132,12 +130,12 @@ JAZZMIN_SETTINGS = {
     "site_header": "SHP-Learner",
     "site_brand": "SHP-Learner",
     "site_logo": "/img/logo.png",
-    "login_logo":" /img/logo.png",
+    "login_logo":"/img/logo11.png",
     "site_icon": "/img/logo.png",
     "welcome_sign": "Welcome to SHP-Learner Admin",
     "copyright": "SHP-Learner Platform 2025",
     "search_model": ["courses.Course", "courses.CustomUser"],
-    "user_avatar": None,
+    "user_avatar":"/img/logo.png",
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "View Site", "url": "/", "new_window": True},

@@ -814,3 +814,8 @@ section {
 .footer-bottom a:hover {
   text-decoration: underline;
 }
+#login-form .brand-image {
+    width: 150px;     
+    height: auto;     
+    object-fit: contain;
+}
