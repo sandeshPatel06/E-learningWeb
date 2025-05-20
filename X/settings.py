@@ -1,13 +1,22 @@
 from pathlib import Path
-from decouple import config, Csv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+# Load environment variables directly from the OS environment
+SECRET_KEY = os.getenv('SECRET_KEY', 'default_secret_key')
+
+# DEBUG is usually a boolean, parse string to bool
+def str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    return value.lower() in ('true', '1', 'yes')
+
+DEBUG = str_to_bool(os.getenv('DEBUG', 'True'))
+
+# ALLOWED_HOSTS as a list, parse comma-separated string
+allowed_hosts_str = os.getenv('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',')] if allowed_hosts_str else []
 
 # Application definition
 INSTALLED_APPS = [
@@ -52,23 +61,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'X.wsgi.application'
 
-# Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
+# Database configuration
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.' + config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='3306'),
+        'ENGINE': 'django.db.backends.' + os.getenv('DB_ENGINE', 'sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
@@ -109,12 +110,12 @@ REST_FRAMEWORK = {
 
 # Email configuration from environment
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.example.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = str_to_bool(os.getenv('EMAIL_USE_TLS', 'True'))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@example.com')
 
 # Security settings
 SECURE_SSL_REDIRECT = not DEBUG
@@ -122,7 +123,6 @@ SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-
 
 # Jazzmin settings
 JAZZMIN_SETTINGS = {
