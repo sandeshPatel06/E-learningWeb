@@ -15,6 +15,11 @@ from .serializers import (
     LessonSerializer, EnrollmentSerializer, QuizSerializer, FAQSerializer
 )
 
+# import traceback
+from .utils.mail import trigger_email  
+import os
+import traceback
+
 # --- CustomUser API Views ---
 class CustomUserListCreateAPIView(generics.ListCreateAPIView):
     """
@@ -102,17 +107,24 @@ class LessonRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class EnrollmentListCreateAPIView(generics.ListCreateAPIView):
     """
     API view to list all Enrollments or create a new Enrollment.
-    Only authenticated users can list/create.
+    Anyone can list, only authenticated users can create.
     """
-    queryset = Enrollment.objects.all().order_by('-enrolled_at')
     serializer_class = EnrollmentSerializer
-    permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
+    def get_queryset(self):
+        # For GET, return all enrollments (or filter as needed)
+        user = self.request.user
+        # print(Enrollment.objects.filter(student=user).order_by('-created_at'))
+        print(user, "is requesting enrollments")
+        return Enrollment.objects.all().order_by('-enrolled_at')
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        return [IsAuthenticated()]
+
     def perform_create(self, serializer):
-        """
-        Set the student to the requesting user when creating an enrollment.
-        """
         serializer.save(student=self.request.user)
 
 class EnrollmentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -214,4 +226,37 @@ class RegisterAPIView(APIView):
             is_staff=is_staff
         )
         user.save()
+
+        # --- Send Welcome Email ---
+        try:
+            # Log important user info and environment variables for debug purposes
+            print(f"Preparing to send welcome email to: {user.email}")
+            print(f"Username: {user.username}")
+            
+        
+            welcome_context = {
+                'user': user,
+                            }
+        
+            welcome_email_template = 'welcome_email.html'
+            welcome_email_subject = f'Welcome to SHP-Learner, {user.username}!'
+        
+            email_error = trigger_email(
+                context=welcome_context,
+                template=welcome_email_template,
+                subject=welcome_email_subject,
+                recipients=[user.email],
+                message=f"Welcome to SHP-Learner, {user.username}! We're excited to have you."
+            )
+        
+            if email_error:
+                print(f"[Email Error] Failed to send welcome email to1212 {user.email}: {email_error}")
+                print(email_error)
+        
+        except Exception as e:
+            print("[Exception] Unexpected error when trying to send welcome email:")
+            traceback.print_exc()
+        
+        # --- End Send Welcome Email ---
+        
         return Response({'message': 'Registration successful!'}, status=status.HTTP_201_CREATED)

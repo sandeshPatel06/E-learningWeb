@@ -1,8 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../App.jsx';
 
+// Use Vite env variable or fallback
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+
 function Profile({ user, enrollments, navigate }) {
-  const { user: currentUser, handleLogin } = useContext(UserContext);
+  // Safely get context values, fallback to props or empty object
+  const userContext = useContext(UserContext) || {};
+  const currentUser = userContext.user || user;
+  const handleLogin = userContext.handleLogin || (() => {});
+
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
 
@@ -86,7 +93,7 @@ function Profile({ user, enrollments, navigate }) {
           'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '',
         };
       }
-      const res = await fetch(`http://localhost:8000/api/users/${currentUser.id}/`, {
+      const res = await fetch(`${BACKEND_URL}/api/users/${currentUser.id}/`, {
         method: 'PATCH',
         headers,
         credentials: 'include',

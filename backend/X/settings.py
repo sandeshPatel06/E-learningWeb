@@ -119,7 +119,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'sandeshpatel.sp.93@gmail.com'
 EMAIL_HOST_PASSWORD = 'fkorislsvoxviqcn'
-DEFAULT_FROM_EMAIL = 'sandesh.patel@reak.in'
+DEFAULT_FROM_EMAIL = 'sandeshpatel.sp.93@gmail.com'
 
 # --- Security Settings ---
 # These are crucial for production environments.
@@ -137,14 +137,22 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+    'http://192.168.184.221:4173/',
 ]
 
 # CORS settings for development (allow all origins)
 # CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    'http://127.0.0.1',
+    'http://localhost',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    # 'http://127.0.0.1:5173',
+    # 'http://localhost:5173',
+    'http://192.168.184.221:4173',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
