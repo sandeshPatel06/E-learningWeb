@@ -1,11 +1,4 @@
 from pathlib import Path
-import os
-import dj_database_url # Install with: pip install dj-database-url
-import dotenv # Optional: Install with: pip install python-dotenv to load .env files
-
-# Load environment variables from .env file in development (optional, but recommended)
-# In production, environment variables are typically set by the hosting platform.
-dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -13,33 +6,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- Core Settings ---
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# It's crucial to load this from an environment variable in production.
-# Never commit a real secret key to version control.
-# For development, you can use a default, but it MUST be overridden in production.
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-your-very-strong-default-secret-key-for-dev-only!')
+# Hardcoded for demonstration, but NEVER do this in real production.
+SECRET_KEY = '***REMOVED***'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-def str_to_bool(value):
-    """Converts a string value to a boolean."""
-    if isinstance(value, bool):
-        return value
-    return str(value).lower() in ('true', '1', 'yes')
-
-DEBUG = str_to_bool(os.environ.get('DEBUG', 'True')) # Default to True for local development
+DEBUG = True # Hardcoded to True for development
 
 # ALLOWED_HOSTS needs to be a list of strings.
-# For production, set this to your domain names (e.g., 'yourdomain.com', 'www.yourdomain.com').
-# In development, '127.0.0.1' and 'localhost' are common.
-allowed_hosts_str = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost')
-# Add the render.com domain if it's consistently used
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',') if host.strip()]
-# Add the render.com domain to ALLOWED_HOSTS for production
-if not DEBUG and 'sh-2eas.onrender.com' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('sh-2eas.onrender.com')
-
+# Hardcoded for development and your Render deployment.
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',  # <-- Add this line at the top
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,6 +31,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # <-- Add this line at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -84,15 +64,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'X.wsgi.application' # Example: 'myproject.wsgi.application'
 
 # --- Database Configuration ---
-# Recommended for robust production setups: use dj-database-url to parse a DATABASE_URL env var.
-# Example DATABASE_URL for PostgreSQL: "postgres://user:password@host:port/dbname"
-# Example DATABASE_URL for MySQL: "mysql://user:password@host:port/dbname"
-# If DATABASE_URL is not set, it defaults to SQLite for local development.
+# Hardcoded to SQLite.
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600 # Optional: connection timeout for persistent connections
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Password validation
@@ -134,40 +111,48 @@ REST_FRAMEWORK = {
 }
 
 # --- Email Configuration ---
-# SECURITY WARNING: Never hardcode sensitive information like passwords!
-# Load these from environment variables.
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = str_to_bool(os.environ.get('EMAIL_USE_TLS', 'True'))
-# IMPORTANT: Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD as environment variables!
-# For Gmail, you'll likely need an "App password" if you have 2-Factor Authentication enabled.
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'sandeshpatel.sp.93@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'fkorislsvoxviqcn')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'sandesh.patel@reak.in') # Use a more generic default for development
+# SECURITY WARNING: Never hardcode sensitive information like passwords in a public repo!
+# Hardcoded email settings.
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sandeshpatel.sp.93@gmail.com'
+EMAIL_HOST_PASSWORD = 'fkorislsvoxviqcn'
+DEFAULT_FROM_EMAIL = 'sandesh.patel@reak.in'
 
 # --- Security Settings ---
-# These are crucial for production environments. They should be True when DEBUG is False.
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
-SECURE_BROWSER_XSS_FILTER = True # Helps prevent reflected XSS attacks
-SECURE_CONTENT_TYPE_NOSNIFF = True # Prevents browsers from MIME-sniffing a response away from the declared content-type
+# These are crucial for production environments.
+# Hardcoded to reflect DEBUG = True for local development.
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # CSRF_TRUSTED_ORIGINS should include all domains that serve your site.
-# This is a list of trusted origins for cross-site requests.
 CSRF_TRUSTED_ORIGINS = [
-    'https://sh-2eas.onrender.com', # Your Render deployment domain
-    'http://127.0.0.1', # For local development
-    'http://localhost', # For local development
+    # 'https://sh-2eas.onrender.com',
+    'http://127.0.0.1',
+    'http://localhost',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
 ]
-# Allow adding more trusted origins via environment variable
-csrf_trusted_origins_env = os.environ.get('CSRF_TRUSTED_ORIGINS_EXTRA', '')
-if csrf_trusted_origins_env:
-    CSRF_TRUSTED_ORIGINS.extend([
-        origin.strip() for origin in csrf_trusted_origins_env.split(',') if origin.strip()
-    ])
 
+# CORS settings for development (allow all origins)
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+# For production, use:
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+# ]
 
 # --- Jazzmin Settings ---
 # Reference: https://django-jazzmin.readthedocs.io/
@@ -176,9 +161,9 @@ JAZZMIN_SETTINGS = {
     "site_header": "SHP-Learner",
     "site_brand": "SHP-Learner",
     # IMPORTANT: Use STATIC_URL prefix for images that are collected by collectstatic
-    "site_logo": "/static/img/logo.png",
-    "login_logo": "/static/img/logo11.png",
-    "site_icon": "/static/img/logo.png",
+    "site_logo": "/img/logo.png",
+    "login_logo": "/static/img/logo.png", # Adjusted path for consistency
+    "site_icon": "/img/logo.png",
     "welcome_sign": "Welcome to SHP-Learner Admin",
     "copyright": "SHP-Learner Platform 2025",
     "search_model": ["courses.Course", "courses.CustomUser"],

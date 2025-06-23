@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 from courses.views import faq_view
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('courses/', views.courses, name='courses'),
     path('course/<slug:slug>/', views.course_detail, name='course_detail'),
@@ -15,7 +16,7 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('register/', views.register, name='register'),
     path('enroll/<slug:slug>/', views.enroll, name='enroll'),
-    path('admin/', admin.site.urls),
+    path('api/', include('courses.urls')),
    path('faq/', faq_view, name='faq'),
    path(
         'password_reset/',
