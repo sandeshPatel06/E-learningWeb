@@ -1,4 +1,9 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -6,15 +11,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- Core Settings ---
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Hardcoded for demonstration, but NEVER do this in real production.
-SECRET_KEY = '***REMOVED***'
+# Get SECRET_KEY from environment variable. Provide a default for local development.
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '***REMOVED***')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # Hardcoded to True for development
+# Get DEBUG from environment variable. Convert to boolean.
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('true', '1', 't')
 
 # ALLOWED_HOSTS needs to be a list of strings.
-# Hardcoded for development and your Render deployment.
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+# Get ALLOWED_HOSTS from environment variable, split by comma, and strip whitespace.
+# Provide a default for local development.
+ALLOWED_HOSTS_STR = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',') if host.strip()]
 
 # Application definition
 INSTALLED_APPS = [
@@ -42,7 +50,8 @@ MIDDLEWARE = [
 ]
 
 # IMPORTANT: Replace 'X' with your actual Django project's main module name (e.g., 'myproject')
-ROOT_URLCONF = 'X.urls' # Example: 'myproject.urls'
+# Get ROOT_URLCONF from environment variable, or use a default.
+ROOT_URLCONF = os.getenv('DJANGO_ROOT_URLCONF', 'X.urls') # Example: 'myproject.urls'
 
 TEMPLATES = [
     {
@@ -61,14 +70,19 @@ TEMPLATES = [
 ]
 
 # IMPORTANT: Replace 'X' with your actual Django project's main module name (e.g., 'myproject')
-WSGI_APPLICATION = 'X.wsgi.application' # Example: 'myproject.wsgi.application'
+# Get WSGI_APPLICATION from environment variable, or use a default.
+WSGI_APPLICATION = os.getenv('DJANGO_WSGI_APPLICATION', 'X.wsgi.application') # Example: 'myproject.wsgi.application'
 
 # --- Database Configuration ---
-# Hardcoded to SQLite.
+# Hardcoded to SQLite by default, but can be overridden by environment variables.
+# For more complex DBs (PostgreSQL, MySQL), you'd parse more variables (NAME, USER, PASSWORD, HOST, PORT).
+DATABASE_ENGINE = os.getenv('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3')
+DATABASE_NAME = os.getenv('DJANGO_DB_NAME', BASE_DIR / 'db.sqlite3')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': DATABASE_ENGINE,
+        'NAME': DATABASE_NAME,
     }
 }
 
@@ -82,7 +96,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC' # Consider 'Asia/Kolkata' if your primary users are in India for local time awareness
+# Get TIME_ZONE from environment variable.
+TIME_ZONE = os.getenv('DJANGO_TIME_ZONE', 'UTC') # Consider 'Asia/Kolkata' if your primary users are in India for local time awareness
 USE_I18N = True
 USE_TZ = True # Django's recommended way to handle datetimes
 
@@ -111,56 +126,34 @@ REST_FRAMEWORK = {
 }
 
 # --- Email Configuration ---
-# SECURITY WARNING: Never hardcode sensitive information like passwords in a public repo!
-# Hardcoded email settings.
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sandeshpatel.sp.93@gmail.com'
-EMAIL_HOST_PASSWORD = 'fkorislsvoxviqcn'
-DEFAULT_FROM_EMAIL = 'sandeshpatel.sp.93@gmail.com'
+# Get email settings from environment variables.
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your_email@example.com') # IMPORTANT: Change default
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '***REMOVED***') # IMPORTANT: Change default
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'your_email@example.com') # IMPORTANT: Change default
 
 # --- Security Settings ---
-# These are crucial for production environments.
-# Hardcoded to reflect DEBUG = True for local development.
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+# Get security settings from environment variables, relying on DEBUG for defaults.
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 't') and not DEBUG
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 't') and not DEBUG
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 't') and not DEBUG
+SECURE_BROWSER_XSS_FILTER = os.getenv('SECURE_BROWSER_XSS_FILTER', 'True').lower() in ('true', '1', 't')
+SECURE_CONTENT_TYPE_NOSNIFF = os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', 'True').lower() in ('true', '1', 't')
 
 # CSRF_TRUSTED_ORIGINS should include all domains that serve your site.
-CSRF_TRUSTED_ORIGINS = [
-    # 'https://sh-2eas.onrender.com',
-    'http://127.0.0.1',
-    'http://localhost',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-    'http://192.168.184.221:4173/',
-]
+# Get CSRF_TRUSTED_ORIGINS from environment variable, split by comma.
+CSRF_TRUSTED_ORIGINS_STR = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173')
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in CSRF_TRUSTED_ORIGINS_STR.split(',') if origin.strip()]
 
 # CORS settings for development (allow all origins)
-# CORS_ALLOW_ALL_ORIGINS = True
+# Get CORS_ALLOWED_ORIGINS from environment variable, split by comma.
+CORS_ALLOWED_ORIGINS_STR = os.getenv('CORS_ALLOWED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173,http://192.168.184.221:4173')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS_STR.split(',') if origin.strip()]
+CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True').lower() in ('true', '1', 't')
 
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1',
-    'http://localhost',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    # 'http://127.0.0.1:5173',
-    # 'http://localhost:5173',
-    'http://192.168.184.221:4173',
-]
-CORS_ALLOW_CREDENTIALS = True
-
-# For production, use:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://127.0.0.1:5173",
-# ]
 
 # --- Jazzmin Settings ---
 # Reference: https://django-jazzmin.readthedocs.io/
@@ -215,7 +208,7 @@ JAZZMIN_SETTINGS = {
     "custom_css": None,
     "custom_js": None,
     "use_google_fonts_cdn": True,
-    "show_ui_builder": True, # Set to False in production for security/performance
+    "show_ui_builder": os.getenv('JAZZMIN_SHOW_UI_BUILDER', 'True').lower() in ('true', '1', 't') and DEBUG, # Only show in debug mode
     "changeform_format": "horizontal_tabs",
     "changeform_format_single": "single",
     "language_chooser": False,
