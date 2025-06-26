@@ -158,89 +158,74 @@ CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True').lower() in 
 # --- Jazzmin Settings ---
 # Reference: https://django-jazzmin.readthedocs.io/
 JAZZMIN_SETTINGS = {
-    "site_title": "SHP-Learner",
+    "site_title": "SHP-Learner Admin",
     "site_header": "SHP-Learner",
     "site_brand": "SHP-Learner",
-    # IMPORTANT: Use STATIC_URL prefix for images that are collected by collectstatic
     "site_logo": "/img/logo.png",
-    "login_logo": "/static/img/logo.png", # Adjusted path for consistency
+    "login_logo": "/img/loginlogo.png",
     "site_icon": "/img/logo.png",
-    "welcome_sign": "Welcome to SHP-Learner Admin",
-    "copyright": "SHP-Learner Platform 2025",
-    "search_model": ["courses.Course", "courses.CustomUser"],
-    "user_avatar": "/static/img/logo.png",
-    "topmenu_links": [
-        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "View Site", "url": "/", "new_window": True},
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
-    ],
-    "usermenu_links": [
-        # Ensure 'courses.change_customuser' permission is correctly set for the custom user model
-        {"name": "Profile", "url": "admin:courses_customuser_change", "permissions": ["courses.change_customuser"]},
-    ],
+    "welcome_sign": "Welcome to the SHP-Learner Administration Panel",
+    "copyright": "SHP-Learner Platform © 2025",
+
     "show_sidebar": True,
     "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
     "order_with_respect_to": ["courses", "auth"],
+
+    "search_model": ["courses.Course", "courses.CustomUser"],
+
+    "topmenu_links": [
+        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "View Live Site", "url": "https://shp-leaner.netlify.app/", "new_window": True},
+        {"name": "Support & Docs", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+    ],
+
+    "usermenu_links": [
+        {"name": "My Profile", "url": "admin:courses_customuser_1_change", "permissions": ["courses.change_customuser"]},
+    ],
+
+    "user_avatar": "/img/logo.png",
+
     "custom_links": {
         "courses": [
             {
                 "name": "Course Analytics",
-                "url": "course_analytics", # Ensure you have a URL named 'course_analytics' in your urls.py
-                "icon": "fas fa-chart-line",
+                "url": "course_analytics",
+                "icon": "fas fa-chart-bar",
                 "permissions": ["courses.view_course"],
             }
         ]
     },
+
     "icons": {
         "auth": "fas fa-users-cog",
-        "courses.CustomUser": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "courses.Course": "fas fa-book",
-        "courses.Lesson": "fas fa-chalkboard",
+        "courses.CustomUser": "fas fa-user-graduate",
+        "courses.Course": "fas fa-book-open",
+        "courses.Lesson": "fas fa-chalkboard-teacher",
         "courses.Quiz": "fas fa-question-circle",
         "courses.Enrollment": "fas fa-user-check",
     },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
+    "default_icon_parents": "fas fa-folder-open",
+    "default_icon_children": "fas fa-file-alt",
+
     "related_modal_active": True,
-    "custom_css": None,
-    "custom_js": None,
     "use_google_fonts_cdn": True,
-    "show_ui_builder": os.getenv('JAZZMIN_SHOW_UI_BUILDER', 'True').lower() in ('true', '1', 't') and DEBUG, # Only show in debug mode
+    "show_ui_builder": os.getenv('JAZZMIN_SHOW_UI_BUILDER', 'False').lower() in ('true', '1', 't'),
+
     "changeform_format": "horizontal_tabs",
     "changeform_format_single": "single",
     "language_chooser": False,
-}
 
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-primary",
-    "accent": "accent-primary",
-    "navbar": "navbar-dark",
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-primary",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "default",
+    "themes": ["flatly", "cosmo", "litera", "lumen", "minty"],
+    "default_theme": "flatly",
+    "dark_mode_theme": "darkly",
+
     "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success"
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-outline-success"
     }
 }
