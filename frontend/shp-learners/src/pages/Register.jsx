@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../App.jsx'; // Assuming UserContext is correctly imported
-
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -50,7 +50,7 @@ function Register() {
       setIsSubmitting(true);
 
       try {
-        const response = await fetch('http://localhost:8000/api/register/', {
+        const response = await fetch(`${BACKEND_URL}/api/register/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password, role }),
@@ -61,7 +61,7 @@ function Register() {
           setIsSubmitting(false);
           setTimeout(() => {
             handleLogin({ username, email, role, is_staff: role === 'instructor' });
-            navigate('/login');
+            navigate('/profile');
           }, 1500);
         } else {
           setErrors({ apiError: data.message || 'Registration failed. Please try again.' });

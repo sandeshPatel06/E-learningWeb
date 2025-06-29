@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../App.jsx';
 
 // Use Vite env variable or fallback
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 function Profile({ user, enrollments, navigate }) {
   // Safely get context values, fallback to props or empty object
@@ -21,8 +21,8 @@ function Profile({ user, enrollments, navigate }) {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-        <p className="text-center text-xl text-gray-700 bg-white p-6 rounded-lg shadow-md">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <p className="text-center text-xl text-gray-700 bg-white p-8 rounded-lg shadow-lg">
           Please log in to view your profile.
         </p>
       </div>
@@ -46,9 +46,9 @@ function Profile({ user, enrollments, navigate }) {
         { key: 'highest_qualification', label: 'Highest Qualification', type: 'text' },
         { key: 'institution', label: 'Institution', type: 'text' },
         { key: 'skills', label: 'Skills', type: 'text' },
-        { key: 'linkedin_profile', label: 'LinkedIn', type: 'url' }, // Changed to 'url' type
-        { key: 'github_profile', label: 'GitHub', type: 'url' },    // Changed to 'url' type
-        { key: 'website', label: 'Website', type: 'url' },          // Changed to 'url' type
+        { key: 'linkedin_profile', label: 'LinkedIn', type: 'url' },
+        { key: 'github_profile', label: 'GitHub', type: 'url' },
+        { key: 'website', label: 'Website', type: 'url' },
       ]
     : [
         { key: 'first_name', label: 'First Name', type: 'text' },
@@ -56,9 +56,9 @@ function Profile({ user, enrollments, navigate }) {
         { key: 'bio', label: 'Bio', type: 'textarea' },
         { key: 'institution', label: 'Institution', type: 'text' },
         { key: 'skills', label: 'Skills', type: 'text' },
-        { key: 'linkedin_profile', label: 'LinkedIn', type: 'url' }, // Changed to 'url' type
-        { key: 'github_profile', label: 'GitHub', type: 'url' },    // Changed to 'url' type
-        { key: 'website', label: 'Website', type: 'url' },          // Changed to 'url' type
+        { key: 'linkedin_profile', label: 'LinkedIn', type: 'url' },
+        { key: 'github_profile', label: 'GitHub', type: 'url' },
+        { key: 'website', label: 'Website', type: 'url' },
       ];
 
   const handleEditChange = (e) => {
@@ -146,26 +146,24 @@ function Profile({ user, enrollments, navigate }) {
       }
     }
 
-
     return (
-      <p className="text-gray-700 mb-2 text-base sm:text-lg break-words"> {/* Added break-words */}
+      <p className="text-gray-700 mb-2 text-base sm:text-lg break-words">
         <strong className="font-semibold text-gray-800">{label}:</strong> {value}
       </p>
     );
   };
 
   return (
-    <section className="profile-section bg-white p-6 sm:p-8 rounded-lg shadow-xl border border-gray-200 mx-auto max-w-full sm:max-w-xl lg:max-w-3xl my-8"> {/* Increased max-width for more content */}
-      <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 sm:mb-6 text-blue-800 text-center sm:text-left"> {/* Bolder heading */}
+    <section className="profile-section bg-white p-6 sm:p-8 rounded-lg shadow-xl border border-gray-200 mx-auto max-w-full sm:max-w-2xl lg:max-w-4xl my-8">
+      <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 sm:mb-6 text-blue-800 text-center sm:text-left">
         {currentUser.role === 'admin' && 'Admin Dashboard'}
         {currentUser.role === 'instructor' && 'Instructor Dashboard'}
         {isUser && `Welcome, ${currentUser.username}`}
-
       </h1>
 
       {(currentUser.role === 'admin' || currentUser.role === 'instructor') && (
         <a
-          href="http://localhost:8000/admin"
+          href={`${BACKEND_URL}/${'admin'}`}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full sm:w-auto mx-auto bg-green-600 text-white hover:bg-green-700 mb-6 px-6 py-3 rounded-md font-medium text-base sm:text-lg text-center transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
@@ -180,7 +178,7 @@ function Profile({ user, enrollments, navigate }) {
         {!editing ? (
           <button
             onClick={() => setEditing(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm sm:text-base font-medium flex items-center gap-1"
+            className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm sm:text-base font-medium flex items-center gap-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.38-2.827-2.828z" />
@@ -213,10 +211,21 @@ function Profile({ user, enrollments, navigate }) {
         )}
       </div>
 
+      {/* Profile Picture (moved to top of information section) */}
+      {currentUser.profile_picture && (
+        <div className="flex justify-center mb-6">
+          <img
+            src={currentUser.profile_picture}
+            alt="Profile"
+            className="w-32 h-32 object-cover rounded-full border border-gray-200 shadow-md"
+          />
+        </div>
+      )}
+
       {/* Profile Details / Edit Form */}
       {editing ? (
-        <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-4"> {/* Responsive grid layout for form */}
-          {editableFields.map((field) => (
+        <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pb-4 border-b border-gray-200">
+          {editableFields.filter(field => field.key !== 'profile_picture').map((field) => ( // Filter out profile picture from regular fields
             <div key={field.key} className="form-group">
               <label htmlFor={field.key} className="block text-gray-700 font-semibold mb-1 text-sm">{field.label}</label>
               {field.type === 'textarea' ? (
@@ -225,7 +234,7 @@ function Profile({ user, enrollments, navigate }) {
                   name={field.key}
                   value={form[field.key] || ''}
                   onChange={handleEditChange}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 text-sm h-24 resize-y" // Added height and resize
+                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800 text-sm h-24 resize-y"
                 />
               ) : field.type === 'select' ? (
                 <select
@@ -247,7 +256,7 @@ function Profile({ user, enrollments, navigate }) {
                   name={field.key}
                   accept="image/*"
                   onChange={handleEditChange}
-                  className="w-full border border-gray-300 rounded-md p-2 text-gray-800 text-sm"
+                  className="w-full border border-gray-300 rounded-md p-2 text-gray-800 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
               ) : (
                 <input
@@ -261,19 +270,23 @@ function Profile({ user, enrollments, navigate }) {
               )}
             </div>
           ))}
-        </form>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-4"> {/* Responsive grid for display mode */}
-          {/* Show profile picture if exists */}
-          {currentUser.profile_picture && (
-            <div className="mb-4">
-              <img
-                src={currentUser.profile_picture}
-                alt="Profile"
-                className="w-32 h-32 object-cover rounded-full border mx-auto"
+          {/* Profile picture input specifically for edit mode */}
+          {editing && isUser && (
+            <div className="form-group md:col-span-2"> {/* Make it span full width in edit mode */}
+              <label htmlFor="profile_picture" className="block text-gray-700 font-semibold mb-1 text-sm">Profile Picture</label>
+              <input
+                id="profile_picture"
+                type="file"
+                name="profile_picture"
+                accept="image/*"
+                onChange={handleEditChange}
+                className="w-full border border-gray-300 rounded-md p-2 text-gray-800 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
             </div>
           )}
+        </form>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-4 border-b border-gray-200">
           {renderField('Username', currentUser.username)}
           {renderField('Email', currentUser.email)}
           {renderField('Role', currentUser.role)}
@@ -313,14 +326,13 @@ function Profile({ user, enrollments, navigate }) {
                 <>
                   {renderField('Instructor Rating', currentUser.instructor_rating)}
                   {renderField('Total Reviews', currentUser.total_reviews)}
-                  {renderField('Earnings', `₹${currentUser.earnings}`)} {/* Add currency symbol */}
+                  {renderField('Earnings', `₹${currentUser.earnings}`)}
                 </>
               )}
             </>
           )}
         </div>
       )}
-
 
       {isUser && (
         <>
@@ -335,7 +347,7 @@ function Profile({ user, enrollments, navigate }) {
                   <button
                     onClick={() => navigate(`/course/${enrollment.course.slug}`)}
                     aria-label={`View ${enrollment.course.title} course details`}
-                    className="text-blue-600 hover:underline font-medium text-base sm:text-lg mb-2 sm:mb-0 text-left" // Align text left
+                    className="text-blue-600 hover:underline font-medium text-base sm:text-lg mb-2 sm:mb-0 text-left"
                   >
                     {enrollment.course.title}
                   </button>

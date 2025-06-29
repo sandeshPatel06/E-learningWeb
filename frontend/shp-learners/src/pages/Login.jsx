@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../App.jsx'; // Assuming UserContext is correctly imported
-
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL ;
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +31,7 @@ function Login() {
 
     try {
       // Login API call
-      const response = await fetch('http://localhost:8000/api/login/', {
+      const response = await fetch(`${BACKEND_URL}/api/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ function Login() {
       }
 
       // Optionally, fetch user profile after login
-      const userRes = await fetch('http://localhost:8000/api/users/', {
+      const userRes = await fetch(`${BACKEND_URL}/api/users/`, {
         credentials: 'include',
       });
       if (!userRes.ok) {
@@ -159,7 +159,7 @@ function Login() {
               className={`w-full sm:w-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 text-base sm:text-lg font-semibold flex items-center justify-center
                 ${isSubmitting
                   ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 focus:ring-opacity-75 shadow-md hover:shadow-lg'
+                  : 'bg-blue-900 text-white hover:bg-blue-700 focus:ring-blue-500 focus:ring-opacity-75 shadow-md hover:shadow-lg'
                 }`}
               disabled={isSubmitting}
             >

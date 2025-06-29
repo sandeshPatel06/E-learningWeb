@@ -90,7 +90,7 @@ function FAQ() {
               required
             ></textarea>
           </div>
-          <button type="submit" className="btn bg-blue-600 text-white hover:bg-blue-700 py-3 px-8 text-lg">
+          <button type="submit" className="btn bg-blue-900 text-white hover:bg-blue-700 py-3 px-8 text-lg">
             Submit Question
           </button>
         </form>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, Suspense } from 'react';
 // No longer need to import Home directly since it's lazy-loaded
 // import Home from './pages/Home.jsx';
-
 // Dynamically import components using React.lazy
 const Home = React.lazy(() => import('./pages/Home.jsx')); // Added back lazy load for Home
 const CourseDetail = React.lazy(() => import('./pages/CourseDetail.jsx'));
@@ -16,7 +15,7 @@ const PasswordResetConfirm = React.lazy(() => import('./pages/PasswordResetConfi
 const PasswordResetComplete = React.lazy(() => import('./pages/PasswordResetComplete.jsx'));
 
 // Use Vite's import.meta.env or fallback to localhost
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL;
 
 const getCookie = (name) => {
     let cookieValue = null;
