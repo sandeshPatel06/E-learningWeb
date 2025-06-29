@@ -7,7 +7,13 @@ from django import forms
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
-from .models import Course, Enrollment, CustomUser, Category, Lesson, Quiz, FAQ
+from courses.models import Course  # Only Course from courses.models
+from Enrollment.models import Enrollment
+from Account.models import CustomUser
+from Category.models import Category
+from Lesson.models import Lesson
+from Quiz.models import Quiz
+from FAQ.models import FAQ
 from django.views.generic import ListView
 from django.contrib.auth.views import PasswordResetView
 
@@ -143,6 +149,8 @@ def index(request):
     context = {'courses': courses}
     return render(request, 'index.html', context)
 
+def frontend(request):
+    return redirect("https://shp-leaner.netlify.app/")
 def courses(request):
     courses = Course.objects.all()
     courses = {'courses': courses}
