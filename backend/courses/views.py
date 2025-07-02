@@ -16,7 +16,7 @@ from Quiz.models import Quiz
 from FAQ.models import FAQ
 from django.views.generic import ListView
 from django.contrib.auth.views import PasswordResetView
-
+import os
 # DRF Imports
 from rest_framework import viewsets
 from .serializers import (
@@ -150,7 +150,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 def frontend(request):
-    return redirect("https://shp-leaner.netlify.app/")
+    return redirect(os.getenv('FRONTEND_URL'))
 def courses(request):
     courses = Course.objects.all()
     courses = {'courses': courses}
