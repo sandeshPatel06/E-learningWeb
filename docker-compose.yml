@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    container_name: shp-learners-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend/shp-learners:/app/frontend
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: shp-learners-db
+    environment:
+      POSTGRES_DB: shp_learners
+      POSTGRES_USER: shpuser
+      POSTGRES_PASSWORD: shppassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:

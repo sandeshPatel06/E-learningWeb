@@ -81,7 +81,7 @@ function PasswordResetConfirm({ navigate }) {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary bg-blue-600 text-white hover:bg-blue-700 w-full py-3 mt-4">
+          <button type="submit" className="btn btn-primary bg-blue-900 text-white hover:bg-blue-700 w-full py-3 mt-4">
             Reset Password
           </button>
         </form>

@@ -34,7 +34,7 @@ function CourseDetail({ course, isEnrolled, user, navigate }) {
         ) : (
           <button
             onClick={() => navigate(`/enroll/${course.slug}`)}
-            className="btn btn-primary bg-blue-600 text-white hover:bg-blue-700"
+            className="btn btn-primary bg-blue-900 text-white hover:bg-blue-700"
           >
             Enroll Now
           </button>

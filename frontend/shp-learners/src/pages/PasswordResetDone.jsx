@@ -15,7 +15,7 @@ function PasswordResetDone({ navigate }) {
         </p>
         <button
           onClick={() => navigate('/login')}
-          className="btn btn-primary bg-blue-600 text-white hover:bg-blue-700 px-6 py-3"
+          className="btn btn-primary bg-blue-900 text-white hover:bg-blue-700 px-6 py-3"
         >
           Return to Login
         </button>

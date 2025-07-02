@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+const BACKEND_URL = import.meta.env.VITE_APP_BACKEND_URL ;
 function Home({ courses: initialCourses, navigate }) {
   const [courses, setCourses] = useState(initialCourses || []);
   const [loading, setLoading] = useState(false);
@@ -7,7 +7,7 @@ function Home({ courses: initialCourses, navigate }) {
 
   useEffect(() => {
     setLoading(true);
-    fetch('http://localhost:8000/api/courses/')
+    fetch(`${BACKEND_URL}/api/courses/`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -141,7 +141,7 @@ function Home({ courses: initialCourses, navigate }) {
                 </div>
                 <button
                   onClick={() => navigate(`/course/${course.slug}`)}
-                  className="btn bg-blue-600 text-white w-full py-2 md:py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transform hover:scale-105 transition duration-300 ease-in-out text-base md:text-lg font-semibold"
+                  className="btn bg-blue-900 text-white w-full py-2 md:py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transform hover:scale-105 transition duration-300 ease-in-out text-base md:text-lg font-semibold"
                 >
                   View Course Details
                 </button>
