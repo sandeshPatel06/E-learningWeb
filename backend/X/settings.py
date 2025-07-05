@@ -193,7 +193,7 @@ JAZZMIN_SETTINGS = {
 
     "topmenu_links": [
         {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "View Live Site", "url": "https://shp-leaner.netlify.app/", "new_window": True},
+        {"name": "View Live Site", "url": "https://shplearner.netlify.app/", "new_window": True},
         {"name": "Support & Docs", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
     ],
 
