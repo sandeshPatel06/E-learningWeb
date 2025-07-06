@@ -1,49 +1,52 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../App.jsx';
-import logo from '../assets/logo.png'; // Correct import for React
+import logo from '../assets/logo.png';
 
 function BaseLayout({ children }) {
-  const { user, handleLogout, navigate } = useContext(UserContext); // Use useContext to get user data and navigation functions
-  const [isNavOpen, setIsNavOpen] = useState(false); // State to control mobile navigation visibility
+  const { user, handleLogout, navigate } = useContext(UserContext);
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
-  // Function to toggle mobile navigation
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 font-sans"> {/* Added a default font-sans */}
+    <div className="min-h-screen flex flex-col bg-gray-100 font-sans">
       {/* Navbar */}
       <nav className="bg-blue-900 p-4 shadow-lg">
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="container mx-auto flex justify-between items-center relative">
           <a
             className="flex items-center text-white text-xl md:text-2xl font-bold rounded-lg px-2 py-1 md:px-3 md:py-2 transition-colors duration-300 hover:bg-blue-800"
             href="#"
             onClick={() => navigate('/')}
           >
-            <img src={logo} alt="Logo" className="w-8 h-8 md:w-10 md:h-10 mr-2 rounded-full"/> {/* Responsive image sizing */}
+            <img src={logo} alt="Logo" className="w-8 h-8 md:w-10 md:h-10 mr-2 rounded-full" />
             SHP-Learner
           </a>
+
+          {/* Mobile menu toggle button */}
           <button
-            className="text-white text-2xl cursor-pointer md:hidden focus:outline-none" // Added focus outline for accessibility
+            className="text-white text-2xl cursor-pointer md:hidden focus:outline-none"
             aria-label="Toggle navigation"
             onClick={toggleNav}
           >
             ☰
           </button>
+
+          {/* Navigation menu */}
           <ul
             className={`
               ${isNavOpen ? 'flex' : 'hidden'}
-              flex-col absolute top-full left-0 w-full bg-blue-900 shadow-lg z-50 // z-index to ensure it's on top
+              flex-col absolute top-full left-0 w-full bg-blue-900 shadow-lg z-50
               md:flex md:flex-row md:static md:w-auto md:bg-transparent md:shadow-none md:space-x-8
-              py-2 md:py-0 px-4 md:px-0 // Padding for mobile menu items
+              py-2 md:py-0 px-4 md:px-0
             `}
           >
             <li>
               <a
                 href="#"
                 onClick={() => { navigate('/'); setIsNavOpen(false); }}
-                className="block py-2 px-4 text-white hover:text-blue-200 transition-colors duration-300 md:inline-block rounded-lg hover:bg-blue-800 text-base md:text-lg" // Adjusted text size
+                className="block py-2 px-4 text-white hover:text-blue-200 transition-colors duration-300 md:inline-block rounded-lg hover:bg-blue-800 text-base md:text-lg"
               >
                 Home
               </a>
@@ -87,7 +90,7 @@ function BaseLayout({ children }) {
               <li>
                 <a
                   href="#"
-                  onClick={() => { alert('Admin link clicked! This would typically redirect to a backend admin panel.'); setIsNavOpen(false); }}
+                  onClick={() => { alert('Admin link clicked!'); setIsNavOpen(false); }}
                   className="block py-2 px-4 text-white hover:text-blue-200 transition-colors duration-300 md:inline-block rounded-lg hover:bg-blue-800 text-base md:text-lg"
                 >
                   Admin
@@ -99,7 +102,7 @@ function BaseLayout({ children }) {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto p-4 md:p-6 flex-grow"> {/* Increased padding on medium screens */}
+      <main className="container mx-auto p-4 md:p-6 flex-grow">
         {children}
       </main>
 
@@ -117,6 +120,7 @@ function BaseLayout({ children }) {
               <span className="inline-block mt-2 font-semibold text-yellow-300">Join us to start learning today!</span>
             </p>
           </div>
+
           {/* Links */}
           <div className="footer-links">
             <h4 className="text-2xl font-bold mb-4">Quick Links</h4>
@@ -132,6 +136,7 @@ function BaseLayout({ children }) {
               </li>
             </ul>
           </div>
+
           {/* Contact */}
           <div className="footer-contact">
             <h4 className="text-2xl font-bold mb-4">Contact Us</h4>
@@ -150,20 +155,22 @@ function BaseLayout({ children }) {
               </p>
             </div>
           </div>
+
           {/* Social Media */}
           <div className="footer-social">
             <h4 className="text-2xl font-bold mb-4">Follow Us</h4>
             <div className="social-icons flex space-x-5 mt-2">
-              <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" className="social-icon text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-twitter"></i></a>
-              <a href="https://www.linkedin.com/in/sandesh-patel07" className="social-icon text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-linkedin-in"></i></a>
-              <a href="https://www.instagram.com/sandesh_patel007" className="social-icon text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-instagram"></i></a>
+              <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" className="text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-twitter"></i></a>
+              <a href="https://www.linkedin.com/in/sandesh-patel07" className="text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-linkedin-in"></i></a>
+              <a href="https://www.instagram.com/sandesh_patel007" className="text-gray-300 hover:text-yellow-300 transition-colors duration-300 text-3xl" target="_blank" rel="noopener noreferrer"><i className="fab fa-instagram"></i></a>
             </div>
             <div className="mt-4">
               <span className="inline-block bg-yellow-400 text-blue-900 px-3 py-1 rounded-full font-bold text-xs">#KeepLearning</span>
             </div>
           </div>
         </div>
-        {/* Bottom Bar */}
+
+        {/* Footer Bottom */}
         <div className="footer-bottom text-center text-gray-400 mt-10 border-t border-blue-800 pt-5 px-4">
           <p className="text-base">
             &copy; {new Date().getFullYear()} <span className="font-bold text-yellow-300">SHP-Learnering Platform</span>. All Rights Reserved |
