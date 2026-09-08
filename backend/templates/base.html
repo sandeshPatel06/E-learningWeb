@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="SHP-Learner: A modern SHP-Learnering platform offering diverse courses for skill development."
+    />
+    <meta
+      name="keywords"
+      content="SHP-Learnering, online courses, education, learning platform"
+    />
+    <meta name="author" content="SHP-Learner Team" />
+    <meta
+      property="og:title"
+      content="{% block og_title %}SHP-Learnering Platform{% endblock %}"
+    />
+    <meta
+      property="og:description"
+      content="Join SHP-Learner to access a wide range of online courses."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://newdomain.com" />
+    <title>{% block title %}SHP-Learner{% endblock %}</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+  <!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar" aria-label="Main navigation">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+  <img src="{% static 'img/logo.png' %}" alt="Logo" class="navbar-logo">
+  SHP-Learner
+</a>
+ <button
+          class="navbar-toggle"
+          aria-label="Toggle navigation"
+          onclick="toggleNav()"
+        >
+          ☰
+        </button>
+        <ul class="navbar-nav" id="navbarNav">
+  <li><a href="{% url 'index' %}">Home</a></li>
+  <!-- <li><a href="{% url 'courses' %}">Courses</a></li> -->
+
+  {% if user.is_authenticated %}
+    {% if not user.is_staff %}
+      <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% endif %}
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+  {% else %}
+    <li><a href="{% url 'login' %}">Login</a></li>
+    <!-- <li><a href="{% url 'register' %}">Register</a></li> -->
+  {% endif %}
+
+  {% if user.is_staff %}
+    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+  {% endif %}
+</ul>
+
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">{% block content %} {% endblock %}</main>
+
+    <!-- Footer -->
+<footer class="footer">
+  <div class="footer-container container">
+    
+    <!-- About -->
+    <div class="footer-about">
+      <h4>About Us</h4>
+      <p>SHP-Learnering Platform is dedicated to providing high-quality courses to help you enhance your skills and achieve your career goals. Join us to start learning today!</p>
+    </div>
+
+    <!-- Links -->
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <!-- <li><a href="#" onclick="showCoursePage()">Courses</a></li> -->
+        <!-- <li><a href="#">About Us</a></li> -->
+        <li><a href="https://wa.me/9399613606">Contact Us</a></li>
+        <li><a href="{% url 'faq' %}">FAQ</a></li>
+      </ul>
+    </div>
+
+    <!-- Contact -->
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+      <p><i class="fas fa-envelope"></i> sandeshpatel.sp.93@gmail.com</p>
+      <p><i class="fas fa-phone-alt"></i> +91 9399613606</p>
+      <p><i class="fas fa-map-marker-alt"></i> 420 Kareli St, MP Narsinghpur, India</p>
+    </div>
+
+    <!-- Social Media -->
+    <div class="footer-social">
+      <h4>Follow Us</h4>
+      <div class="social-icons">
+        <a href="https://x.com/SandeshPat007?t=teYEP7w9aNZYSYKc0sF7dQ&s=09" class="social-icon" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/in/sandesh-patel07" class="social-icon" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://www.instagram.com/sandesh_patel007" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <p>&copy; 2024 SHP-Learnering Platform. All Rights Reserved |
+      <a href="#">Privacy Policy</a> |
+      <a href="#">Terms of Service</a>
+    </p>
+  </div>
+</footer>
+
+
+    <!-- JavaScript for Navbar Toggle -->
+    <script>
+      function toggleNav() {
+        const nav = document.getElementById("navbarNav");
+        nav.classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>

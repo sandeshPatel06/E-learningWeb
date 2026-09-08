@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - SHP-Learner{% endblock %}
+{% block og_title %}Home - SHP-Learner{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to SHP-Learner</h1>
+        <p>Explore our wide range of courses to enhance your skills.</p>
+        <a href="{% url 'courses' %}" class="btn btn-primary">Browse Courses</a>
+    </section>
+
+    <!-- Courses List -->
+    <h2>Available Courses</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md);">
+        {% for course in courses %}
+            <div class="card">
+                <h3>{{ course.title }}</h3>
+                <p>{{ course.description|truncatewords:20 }}</p>
+                <p><strong>Instructor:</strong> {{ course.instructor.username }}</p>
+                <p><strong>Price:</strong> {% if course.is_free %}Free{% else %}₹{{ course.price }}{% endif %}</p>
+                <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">View Course</a>
+            </div>
+        {% empty %}
+            <p>No courses available yet.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
