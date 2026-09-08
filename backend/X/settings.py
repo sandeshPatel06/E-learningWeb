@@ -22,7 +22,7 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('true', '1', 't')
 # ALLOWED_HOSTS needs to be a list of strings.
 # Get ALLOWED_HOSTS from environment variable, split by comma, and strip whitespace.
 # Provide a default for local development.
-ALLOWED_HOSTS_STR = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,')
+ALLOWED_HOSTS_STR = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,shp-learner.onrender.com,.onrender.com,.shptechnology.online,.pages.dev,*')
 ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',') if host.strip()]
 
 # Application definition
