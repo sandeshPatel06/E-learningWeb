@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - SHP-Learner{% endblock %}
+{% block og_title %}Profile - SHP-Learner{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <h1>{{ user.username }}'s Profile</h1>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+
+    <h2>Enrolled Courses</h2>
+    <ul class="list-group">
+        {% for enrollment in enrollments %}
+        <li class="list-group-item">
+            <a href="{% url 'course_detail' enrollment.course.slug %}"
+               aria-label="View {{ enrollment.course.title }} course details">
+                {{ enrollment.course.title }}
+            </a>
+            <span class="progress-badge" aria-label="Progress: {{ enrollment.progress }} percent complete">
+                {{ enrollment.progress }}% Complete
+            </span>
+        </li>
+        {% empty %}
+        <li class="list-group-item">You are not enrolled in any courses yet.</li>
+        {% endfor %}
+    </ul>
+
+   
+    <a href="{% url 'password_reset' %}" class="btn btn-warning" style="margin-top: 20px;">
+        Reset Password
+    </a>
+</section>
+{% endblock %}

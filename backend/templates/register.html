@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - SHP-Learner{% endblock %}
+{% block og_title %}Register - SHP-Learner{% endblock %}
+
+{% block content %}
+    <h1>Register</h1>
+    {% if form.errors %}
+        <div class="form-error" role="alert" id="form-errors">
+            {% for field in form %}
+                {% if field.errors %}
+                    {{ field.label }}: {{ field.errors|join:", " }}<br>
+                {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                {{ error }}<br>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" style="max-width: 400px;" aria-describedby="form-errors">
+        {% csrf_token %}
+        <!-- CSRF token for security -->
+        <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input
+                type="text"
+                name="username"
+                id="username"
+                class="form-control"
+                required
+                aria-required="true"
+                autocomplete="username"
+                value="{{ form.username.value|default_if_none:'' }}"
+            />
+            {% if form.username.errors %}
+                <span class="form-error">{{ form.username.errors|join:", " }}</span>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+                required
+                aria-required="true"
+                autocomplete="email"
+                value="{{ form.email.value|default_if_none:'' }}"
+            />
+            {% if form.email.errors %}
+                <span class="form-error">{{ form.email.errors|join:", " }}</span>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="password1" class="form-label">Password</label>
+            <input
+                type="password"
+                name="password1"
+                id="password1"
+                class="form-control"
+                required
+                aria-required="true"
+                autocomplete="new-password"
+            />
+            {% if form.password1.errors %}
+                <span class="form-error">{{ form.password1.errors|join:", " }}</span>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="password2" class="form-label">Confirm Password</label>
+            <input
+                type="password"
+                name="password2"
+                id="password2"
+                class="form-control"
+                required
+                aria-required="true"
+                autocomplete="new-password"
+            />
+            {% if form.password2.errors %}
+                <span class="form-error">{{ form.password2.errors|join:", " }}</span>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="role" class="form-label">Role</label>
+            <select
+                name="role"
+                id="role"
+                class="form-control"
+                required
+                aria-required="true"
+            >
+                <option value="student" {% if form.role.value == 'student' %}selected{% endif %}>Student</option>
+                <option value="instructor" {% if form.role.value == 'instructor' %}selected{% endif %}>Instructor</option>
+            </select>
+            {% if form.role.errors %}
+                <span class="form-error">{{ form.role.errors|join:", " }}</span>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+{% endblock %}

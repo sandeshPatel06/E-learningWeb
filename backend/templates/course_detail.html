@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} - SHP-Learner{% endblock %}
+{% block og_title %}{{ course.title }} - SHP-Learner{% endblock %}
+
+{% block content %}
+<h1>{{ course.title }}</h1>
+<p>{{ course.description }}</p>
+<p><strong>Instructor:</strong> {{ course.instructor.username }}</p>
+<p><strong>Category:</strong> {{ course.category.name }}</p>
+<p>
+  <strong>Price:</strong>
+  {% if course.is_free %}
+    Free of Cost
+  {% else %}
+    ${{ course.price }}
+  {% endif %}
+</p>
+<p><strong>Created:</strong> {{ course.created_at|date:"F d, Y" }}</p>
+
+{% if user.is_authenticated %}
+  {% if is_enrolled %}
+    <p style="color: green">You are enrolled in this course!</p>
+    <button class="btn btn-primary" disabled>Enrolled</button>
+  {% else %}
+    <a href="{% url 'enroll' course.slug %}" class="btn btn-primary">Enroll Now</a>
+  {% endif %}
+{% else %}
+  <p>Please <a href="{% url 'login' %}">log in</a> to enroll in this course.</p>
+{% endif %}
+
+{% if is_enrolled %}
+  <h2>Lessons</h2>
+  <ul class="list-group">
+    {% for lesson in course.lessons.all %}
+      <li class="list-group-item">
+        <strong>{{ lesson.title }}</strong> (Lesson {{ lesson.order }})
+        {% if lesson.video_url %}
+          <a href="{{ lesson.video_url }}" target="_blank">Watch Video</a>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="list-group-item">No lessons available yet.</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="alert alert-warning">You need to enroll in this course to access the lessons.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- XLSX Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script type="text/javascript">
+  var gk_isXlsx = false;
+  var gk_xlsxFileLookup = {};
+  var gk_fileData = {};
+
+  function filledCell(cell) {
+    return cell !== "" && cell != null;
+  }
+
+  function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+      try {
+        var workbook = XLSX.read(gk_fileData[filename], { type: "base64" });
+        var firstSheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[firstSheetName];
+
+        // Convert sheet to JSON to filter blank rows
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, {
+          header: 1,
+          blankrows: false,
+          defval: "",
+        });
+
+        // Filter out completely empty rows
+        var filteredData = jsonData.filter((row) => row.some(filledCell));
+
+        // Heuristic to find the header row
+        var headerRowIndex = filteredData.findIndex(
+          (row, index) =>
+            row.filter(filledCell).length >=
+            (filteredData[index + 1]?.filter(filledCell).length || 0)
+        );
+
+        if (headerRowIndex === -1 || headerRowIndex > 25) {
+          headerRowIndex = 0;
+        }
+
+        // Convert filtered JSON back to CSV
+        var csvSheet = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+        var csv = XLSX.utils.sheet_to_csv(csvSheet, { header: 1 });
+        return csv;
+      } catch (e) {
+        console.error("XLSX parsing failed:", e);
+        return "";
+      }
+    }
+
+    return gk_fileData[filename] || "";
+  }
+</script>
+{% endblock %}
