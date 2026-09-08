@@ -163,14 +163,15 @@ SECURE_CONTENT_TYPE_NOSNIFF = os.getenv('SECURE_CONTENT_TYPE_NOSNIFF', 'True').l
 
 # CSRF_TRUSTED_ORIGINS should include all domains that serve your site.
 # Get CSRF_TRUSTED_ORIGINS from environment variable, split by comma.
-CSRF_TRUSTED_ORIGINS_STR = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173')
+CSRF_TRUSTED_ORIGINS_STR = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173,https://e-learning.shptechnology.online,https://elearning.shptechnology.online,https://e-learnering.shptechnology.online,https://learn.shptechnology.online,https://shp-learners.pages.dev')
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in CSRF_TRUSTED_ORIGINS_STR.split(',') if origin.strip()]
 
-# CORS settings for development (allow all origins)
-# Get CORS_ALLOWED_ORIGINS from environment variable, split by comma.
-CORS_ALLOWED_ORIGINS_STR = os.getenv('CORS_ALLOWED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173,http://192.168.184.221:4173')
+# CORS settings
+CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'True').lower() in ('true', '1', 't')
+CORS_ALLOWED_ORIGINS_STR = os.getenv('CORS_ALLOWED_ORIGINS', 'http://127.0.0.1,http://localhost,http://localhost:5173,http://127.0.0.1:5173,https://e-learning.shptechnology.online,https://elearning.shptechnology.online,https://e-learnering.shptechnology.online,https://learn.shptechnology.online,https://shp-learners.pages.dev')
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS_STR.split(',') if origin.strip()]
 CORS_ALLOW_CREDENTIALS = os.getenv('CORS_ALLOW_CREDENTIALS', 'True').lower() in ('true', '1', 't')
+
 
 
 # --- Jazzmin Settings ---
